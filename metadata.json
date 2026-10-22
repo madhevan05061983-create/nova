@@ -1,0 +1,10 @@
+{
+  "name": "Nova Voice Agent",
+  "description": "A futuristic voice assistant with real-time speech interaction, speech synthesis, task automation, and dynamic video background.",
+  "requestFramePermissions": [
+    "android.permission.RECORD_AUDIO"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
