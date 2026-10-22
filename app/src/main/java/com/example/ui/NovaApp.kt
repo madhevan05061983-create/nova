@@ -77,6 +77,7 @@ import com.example.ui.components.NovaLiveConversation
 import com.example.ui.components.NovaVoiceVisualizer
 import com.example.ui.components.QuickSuggestionRow
 import com.example.ui.components.VideoBackground
+import com.example.ui.components.WebEditionView
 import com.example.ui.theme.NovaCyan
 import com.example.ui.theme.NovaDeepSpace
 import com.example.ui.theme.NovaEmerald
@@ -90,6 +91,8 @@ fun NovaApp(
     viewModel: NovaViewModel = viewModel()
 ) {
     val context = LocalContext.current
+
+    var isWebEdition by remember { mutableStateOf(true) }
 
     val userSession by viewModel.userSession.collectAsStateWithLifecycle()
     val messages by viewModel.messages.collectAsStateWithLifecycle()
@@ -203,11 +206,41 @@ fun NovaApp(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // 1. Full Screen Cinematic Looping Video Background
-        VideoBackground(
-            isPlaying = isVideoPlaying,
-            overlayAlpha = 0.58f
-        )
+        if (isWebEdition) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                WebEditionView(viewModel = viewModel)
+
+                // Top mode switcher
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                        .padding(horizontal = 14.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(NovaSurfaceDark.copy(alpha = 0.88f))
+                            .border(1.dp, NovaCyan.copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                            .clickable { isWebEdition = false }
+                            .padding(horizontal = 10.dp, vertical = 5.dp)
+                    ) {
+                        Text(
+                            text = "Switch to Native UI",
+                            color = NovaCyan,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        } else {
+            // 1. Full Screen Cinematic Looping Video Background
+            VideoBackground(
+                isPlaying = isVideoPlaying,
+                overlayAlpha = 0.58f
+            )
 
         // 2. Foreground UI
         if (!userSession.isSignedIn) {
@@ -263,10 +296,11 @@ fun NovaApp(
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(NovaCyan.copy(alpha = 0.2f))
                                 .border(1.dp, NovaCyan.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                                .clickable { isWebEdition = true }
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
-                                text = "NOVA",
+                                text = "NOVA 🌐",
                                 color = NovaCyan,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
@@ -554,4 +588,5 @@ fun NovaApp(
             }
         }
     }
+}
 }

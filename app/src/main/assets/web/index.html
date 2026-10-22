@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nova Voice Agent</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Cinematic Background Video -->
+  <div class="video-container">
+    <video id="bgVideo" autoplay loop muted playsinline>
+      <source src="https://res.cloudinary.com/lirx7iwb/video/upload/v1792684712/a_edit_1.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <div class="app-shell">
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="badge">NOVA</span>
+        <div class="header-title-wrap">
+          <div class="user-row">
+            <span class="online-indicator"></span>
+            <span id="userNameDisplay" class="user-name">Madhevan</span>
+          </div>
+          <span id="headerStatus" class="header-status">Active & Ready</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btnLiveMode" class="btn-live" title="Open Nova Live hands-free conversation">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5v14M7 5v14M2 9v6M22 9v6"/>
+          </svg>
+          <span>Live</span>
+        </button>
+
+        <button id="btnToggleVideo" class="btn-icon" title="Toggle background video playback">
+          <svg id="videoIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </button>
+
+        <button id="btnToggleSettings" class="btn-icon" title="System Settings">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+
+        <button id="btnSignOut" class="btn-signout" title="Sign out">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Sign out</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Expandable Settings Drawer -->
+    <div id="settingsPanel" class="settings-drawer hidden">
+      <div class="settings-title">SYSTEM CONTROLS</div>
+      <div class="setting-row">
+        <span>Auto-Speak Audio</span>
+        <button id="btnAutoSpeakToggle" class="switch active">ON</button>
+      </div>
+      <div class="setting-row">
+        <span>Speaking Speed</span>
+        <div class="speed-chips">
+          <button class="chip-speed" data-speed="0.8">0.8x</button>
+          <button class="chip-speed active" data-speed="1.0">1.0x</button>
+          <button class="chip-speed" data-speed="1.2">1.2x</button>
+          <button class="chip-speed" data-speed="1.4">1.4x</button>
+        </div>
+      </div>
+      <div class="setting-actions">
+        <button id="btnTestVoice" class="btn-secondary">Test Voice</button>
+        <button id="btnClearChat" class="btn-danger">Clear History</button>
+      </div>
+    </div>
+
+    <!-- Main Console View -->
+    <main id="consoleView" class="main-content">
+      <!-- Voice Visualizer Orb -->
+      <section class="visualizer-section">
+        <div class="orb-container">
+          <div id="orbHalo" class="orb-halo"></div>
+          <button id="voiceOrb" class="voice-orb" title="Tap to Speak with Nova">
+            <!-- Speaking waveform equalizer bars -->
+            <div id="waveBars" class="wave-bars hidden">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+            <!-- Microphone Icon -->
+            <svg id="micIcon" class="orb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="orbStatusBadge" class="orb-status-badge">Tap Orb to Speak</div>
+        <div id="statusText" class="orb-status-text">Ready and waiting for your command.</div>
+      </section>
+
+      <!-- Quick Suggestion Pills -->
+      <section class="suggestions-row">
+        <button class="suggestion-chip">Open YouTube</button>
+        <button class="suggestion-chip">Open Google</button>
+        <button class="suggestion-chip">What time is it?</button>
+        <button class="suggestion-chip">Check battery</button>
+        <button class="suggestion-chip">Open Camera</button>
+        <button class="suggestion-chip">Tell me a joke</button>
+      </section>
+
+      <!-- Chat Timeline -->
+      <section id="chatTimeline" class="chat-timeline">
+        <!-- Message bubbles dynamically inserted here -->
+      </section>
+
+      <!-- Bottom Command Input Bar -->
+      <footer class="input-bar">
+        <input type="text" id="queryInput" placeholder="Speak or type, e.g. 'Open YouTube' or 'What time is it?'" autocomplete="off">
+        <button id="btnInputMic" class="btn-circle mic" title="Speak microphone">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <button id="btnInputSend" class="btn-circle send" title="Send command">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </footer>
+    </main>
+
+    <!-- Dedicated Nova Live Conversation Screen -->
+    <div id="liveView" class="live-modal hidden">
+      <div class="live-header">
+        <div class="live-title-box">
+          <span class="live-tag">NOVA LIVE</span>
+          <h2>Real-Time Voice Stream</h2>
+        </div>
+        <div class="live-header-btns">
+          <button id="btnLiveMute" class="btn-live-mute">Mic On</button>
+          <button id="btnExitLive" class="btn-circle">✕</button>
+        </div>
+      </div>
+
+      <div class="live-visualizer">
+        <div class="live-orb-wrap">
+          <div id="liveOrbHalo" class="live-orb-halo"></div>
+          <button id="liveOrbBtn" class="live-orb-btn">
+            <div id="liveWaveBars" class="wave-bars hidden">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+            <svg id="liveMicIcon" class="orb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <div id="liveStatusText" class="live-status">Listening... Speak anytime to chat with Nova</div>
+        <button id="btnLiveInterrupt" class="btn-interrupt hidden">Interrupt Nova</button>
+      </div>
+
+      <div class="live-stream-box">
+        <div class="stream-title">LIVE TRANSCRIPT STREAM</div>
+        <div id="liveStreamFeed" class="stream-feed"></div>
+      </div>
+
+      <div class="live-bottom-bar">
+        <input type="text" id="liveTextInput" placeholder="Or type a question to speak...">
+        <button id="btnLiveSend" class="btn-circle send">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Auth / Sign-in Screen -->
+    <div id="authView" class="auth-screen hidden">
+      <div class="auth-card">
+        <div class="auth-orb-wrap">
+          <div class="auth-orb-halo"></div>
+          <div class="auth-orb">
+            <svg class="orb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </div>
+        </div>
+
+        <span class="auth-badge">NOVA VOICE AGENT</span>
+        <h1>Activate Nova Voice Agent</h1>
+        <p class="auth-desc">Sign in to speak or type commands, open web tools, check battery status, and interact directly with Nova.</p>
+
+        <button id="btnGoogleSignIn" class="btn-google">
+          <svg class="google-logo" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Sign in with Google</span>
+        </button>
+
+        <button id="btnQuickAccess" class="btn-quick-access">Quick Access as Operator</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
